@@ -1,0 +1,26 @@
+{
+  "name": "ecommerece-app",
+  "version": "1.0.0",
+  "description": "ecommerce app using nodejs",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "madhav",
+  "license": "MIT",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.9",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "path": "^0.12.7",
+    "tailwindcss": "^4.0.9",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
