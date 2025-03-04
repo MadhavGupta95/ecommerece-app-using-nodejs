@@ -8,50 +8,118 @@
   </head>
   <body class="p-5">
     <nav class="bg-blue-300 rounded-md flex justify-between p-5">
-      <h1 class="font-black text-4xl">JustBuy</h1>
+      <div class="flex justify-around w-80 items-center">
+        <h1 class="font-black text-4xl">JustBuy</h1>
+        <button id="go-back" class="bg-white rounded-sm cursor-pointer h-7">
+          Go Back
+        </button>
+      </div>
       <div class="">
+        <button id="dash" class="bg-white rounded-sm cursor-pointer p-2">
+          Dashboard
+        </button>
         <input
           class="border-blue-700 border-4 rounded-md w-130 p-2"
           type="text"
           placeholder="Search an item"
         />
-        <button class="bg-white rounded-sm cursor-pointer">Search</button>
+        <button id="btn" class="bg-white rounded-sm cursor-pointer p-2">
+          Search
+        </button>
       </div>
     </nav>
-    <br>
-    <br>
-    <div class="container bg-blue-300 m-auto m-10px max-w-100 min-h-100 p-10 rounded-md">
-         <h1 class="flex text-3xl justify-center">Title</h1>
-         <br>
-         <img src=`${}`>
-         <br>
-         <p>Price : </p>
-         <br>
-         <p>Description : </p>
-         <br>
-         <p>category : </p>
-         <br>
-         <p>rating : </p>
-    </div>
-
-
-
+    <br />
+    <br />
+    <div id="result"></div>
+    <br />
+    <div
+      class="flex flex-wrap h-full justify-around"
+      id="productContainer"
+    ></div>
 
     <script>
-        const input = document.querySelector('input')
-        const button = document.querySelector('button')
+      const token = localStorage.getItem("token")
+      if(!token){
+        window.location.href = '/login'
+      }
+      const goback = document.querySelector("#go-back");
+      goback.addEventListener("click", () => {
+        window.location.href = "/";
+      });
+      const result = document.querySelector("#result");
+      const url = "https://fakestoreapi.com/products";
+      const input = document.querySelector("input");
+      const button = document.querySelector("#btn");
+      const container = document.querySelector("#productContainer");
+      container.innerHTML = `
+            <h1 class="text-3xl font-bold text-center mb-4">Welcome to JustBuy – Your Ultimate Shopping Destination! 🛍️</h1>
+            <div class= "h-100 w-full">
+                <div class=' m-auto w-150'>
+                    <h2 class=' text-xl text-center text-gray-500'>At JustBuy, we bring you the best online shopping experience with a wide range of high-quality products at unbeatable prices. Whether you're looking for the latest fashion trends, stylish accessories, top-notch electronics, or everyday essentials, we've got you covered! With a seamless shopping interface, detailed product descriptions, and real customer reviews, finding the perfect item has never been easier.
+                    
+Search. Shop. Enjoy. Start exploring now and discover amazing deals tailored just for you! 🚀✨</h2>
+                  </div>
+              </div>
+          `;
 
-        const getData = ()=>{
-            fetch('https://example.com/api', { mode: 'no-cors' })
-  .then(response => response.json())  // Use .json() instead of .text() for JSON
-  .then(data => console.log(data))
-  .catch(error => console.error(error))
+      const getData = async () => {
+        try {
+          // const query = input.value.trim().toLowerCase();
+          const query = input.value.trim().toLowerCase();
+          const res = await fetch(url);
+          const data = await res.json();
+          if (query.length === 0) {
+            return (container.innerHTML = `
+              <p class="text-red-500 text-center">Please enter something!</p>
+            `);
+          }
+          const filterData = data.filter(
+            (product) =>
+              product.title.toLowerCase().includes(query) ||
+              product.category.toLowerCase().includes(query)
+          );
+
+          console.log(filterData);
+          console.log(query);
+
+          if (filterData.length === 0) {
+            container.innerHTML = `
+              <h1 class="text-red-500 text-center">No product found!</h1>
+            `;
+          } else {
+            generateCard(filterData);
+          }
+        } catch (error) {
+          console.log(error.message);
         }
+      };
 
-        button.addEventListener('click', ()=>{
-            getData()
-        })
-        
+      const generateCard = async (data) => {
+        const query = input.value.trim().toLowerCase();
+        container.innerHTML = "";
+        result.innerHTML = `<p>Here are the results of your search <b>${query}</b></p>`;
+        data.forEach((product) => {
+          const div = document.createElement("div");
+          div.className = " p-5 rounded-md shadow-lg max-w-100";
+          div.innerHTML = `
+          <img src = "${product.image}" >
+            <h1 class="flex text-3xl justify-center">${product.title}</h1>
+            <br>
+            <p>Price : ${product.price} </p>
+            <br>
+            <p>Description :  ${product.description}</p>
+            <br>
+            <p>category :  ${product.category}</p>
+            <br>
+            <p>rating :  ${product.rating.rate}</p>
+        </div>
+          `;
+          container.appendChild(div);
+        });
+      };
+      button.addEventListener("click", () => {
+        getData();
+      });
     </script>
   </body>
 </html>
