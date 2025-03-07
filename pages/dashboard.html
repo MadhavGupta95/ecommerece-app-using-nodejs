@@ -1,27 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <title>JustBuy - Dashboard</title>
-</head>
-<body>
-    <h1>Dashboard</h1>
+  </head>
+  <body class="p-5">
+    <nav class="bg-blue-300 rounded-md flex justify-between p-5">
+      <div class="flex w-80 items-center">
+        <h1 class="font-black text-4xl">Dashboard</h1>
+      </div>
+      <div class="">
+        <button id="goBack" class="bg-white rounded-sm cursor-pointer p-2">
+          Go back
+        </button>
+      </div>
+    </nav>
     <br />
-    <form action="">
-        Title : <input class="border-blue-700 border-2 rounded-sm p-1 m-1" placeholder="Enter title" type="text">
-        <br />
-        Price : <input class="border-blue-700 border-2 rounded-sm p-1 m-1" placeholder="Enter price" type="text">
-        <br />
-        Description : <input class="border-blue-700 border-2 rounded-sm p-1 m-1" placeholder="Enter description" type="text">
-        <br />
-        Category : <input class="border-blue-700 border-2 rounded-sm p-1 m-1" placeholder="Enter category" type="text">
-        <br />
-        rating : <input class="border-blue-700 border-2 rounded-sm p-1 m-1" placeholder="Enter rating" type="text">
-        <br />
+    <div class="mainContent flex justify-around">
+      <form class="" action="">
+        <div
+          class="form bg-blue-100 p-8 flex flex-col w-100 rounded-md shadow-2xl"
+        >
+          <h1 class="text-center text-xl">Add an item</h1>
+          <br />
+          Title :
+          <input
+            class="border-blue-700 border-2 rounded-sm p-1 m-1"
+            placeholder="Enter title"
+            type="text"
+            id="title"
+            name="title"
+            required
+          />
+          <br />
+          Price :
+          <input
+            class="border-blue-700 border-2 rounded-sm p-1 m-1"
+            placeholder="Enter price"
+            type="number"
+            id="price"
+            name="price"
+            required
+          />
+          <br />
+          Description :
+          <textarea
+            name="description"
+            required
+            id="textarea"
+            class="border-1"
+          ></textarea>
+          <br />
+          Category :
+          <input
+            class="border-blue-700 border-2 rounded-sm p-1 m-1"
+            placeholder="Enter category"
+            type="text"
+            id="category"
+            name="category"
+            required
+          />
+          <br />
+          Rating :
+          <input
+            class="border-blue-700 border-2 rounded-sm p-1 m-1"
+            placeholder="Enter rating"
+            type="number"
+            id="rating"
+            name="rating"
+            max="5"
+          />
+          <br />
 
-        <button class=" cursor-pointer bg-blue-300 rounded-sm p-1 m-1" type="Submit">Submit</button>
-    </form>
-</body>
+          <div class="justify-center flex">
+            <button
+              class="cursor-pointer w-20 hover:bg-red-500 bg-red-300 rounded-sm p-1 m-1 transition duration-150 ease-in-out"
+              type="Submit"
+              id="btn"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
+      <div class="w-0.5 bg-gray-400"></div>
+      <div
+        class="added rounded-md shadow-xl w-100 p-5 h-fit hover:shadow-blue-300 transition ease-in-out duration-150"
+      ></div>
+    </div>
+    <script>
+      const form = document.querySelector("form");
+      const goBack = document.querySelector("#goBack");
+      const addDiv = document.querySelector(".added");
+      const itemList = []
+      addDiv.innerHTML = `
+            <p class="color-grey-300">Add an item</p>
+        `;
+      // const title = document.querySelector('#title')
+      // const price = document.querySelector('#price')
+      // const description = document.querySelector('#textarea')
+      // const category = document.querySelector('#category')
+      // const rating = document.querySelector('#rating')
+      // const sumbit = document.querySelector('#btn')
+
+      goBack.addEventListener("click", () => {
+        window.location.href = "/";
+      });
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        console.log("FormData : ", data);
+        itemList.push(data)
+        generateItem();
+      };
+
+      const generateItem = () => {
+        addDiv.innerHTML = "";
+        itemList.forEach((data) => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+                        <h1 class="text-3xl text-center">${data.title}</h1>
+        <br />
+        <p>Price : ${data.price}</p>
+        <br />
+        <p>description : ${data.description}</p>
+        <br />
+        <p>category : ${data.category}</p>
+        <br />
+        <p>rating : ${data.rating}</p>
+            
+            `;
+          addDiv.appendChild(div);
+        });
+      };
+
+      form.addEventListener("submit", (e) => {
+        handleSubmit(e);
+      });
+    </script>
+  </body>
 </html>
