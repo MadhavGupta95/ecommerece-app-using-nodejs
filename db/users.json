@@ -1,8 +1,1 @@
-[
-  {
-    "id": "0456ca52-3d64-4555-9f04-b483d93a6938",
-    "username": "madhav",
-    "email": "madhav@mail.com",
-    "password": "$2b$10$xDmu2yZzw7zIbl.EPDwS8OczpmnzN7wZIuCXwE1ArPheElrsVq9ny"
-  }
-]
+[{"id":"72da56b2-ff72-4239-9086-5d7f6a3306c7","username":"maus","email":"maus@mail.com","password":"$2b$10$qZhkzm27HJq84cJfWbSYfe7ORt73yZHGqil7Su1YHzG1H/veJC47y"},{"id":"a5afaf10-87ea-4ef9-b504-b15fb148f32d","username":"jdo","email":"jdo@mail.com","password":"$2b$10$tLuTYayrqXEX3hOUfg3o5.fMEcBSsnsNoDAdqLT.Z.hzso1L6Pk/a"}]

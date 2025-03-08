@@ -44,14 +44,15 @@ router.post("/dashboard", isAuthorized, async (req, res) => {
 });
 
 // get the data
-router.get("/", isAuthorized, async (req, res) => {
+router.get("/dashboard", isAuthorized, async (req, res) => {
   try {
-    const datas = await fs.readFile("./db/material.json", "utf-8");
-    const parsedData = JSON.parse(datas);
+    const {user} = req
+    const items = await fs.readFile('./db/material.json', 'utf-8')
+    const parsedData = JSON.parse(items);
     return res.json({
-      data: parsedData,
-      success: true,
-    });
+      data : parsedData.filter((data)=>data.userID === user.id),
+      success : true
+    })
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({
@@ -62,7 +63,7 @@ router.get("/", isAuthorized, async (req, res) => {
 });
 
 // update the prodcut details
-router.patch("/:id", isAuthorized, async (req, res) => {
+router.patch("/dashboard/:id", isAuthorized, async (req, res) => {
   try {
     const { user } = req;
     const { title, price, description, category, rating } = req.body;
@@ -112,7 +113,7 @@ router.patch("/:id", isAuthorized, async (req, res) => {
 
 // delete a product
 
-router.delete("/:id", isAuthorized, async (req, res) => {
+router.delete("/dashboard/:id", isAuthorized, async (req, res) => {
   try {
     const { user } = req;
     const { title, price, description, category, rating } = req.body;

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="icon" href="logo.png" type="image/x-icon">
     <title>JustBuy</title>
   </head>
   <body class="p-5">
@@ -76,6 +77,8 @@ Search. Shop. Enjoy. Start exploring now and discover amazing deals tailored jus
       const getData = async () => {
         try {
           // const query = input.value.trim().toLowerCase();
+          button.disabled = true
+          button.innerHTML = "Searching..."
           const query = input.value.trim().toLowerCase();
           const res = await fetch(url);
           const data = await res.json();
@@ -102,6 +105,9 @@ Search. Shop. Enjoy. Start exploring now and discover amazing deals tailored jus
           }
         } catch (error) {
           console.log(error.message);
+        } finally{
+          button.disabled = false
+          button.innerHTML = "Search"
         }
       };
 

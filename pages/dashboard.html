@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"></script>
+    <link rel="icon" type="image/png" href="logo.png" />
+
     <title>JustBuy - Dashboard</title>
   </head>
   <body class="p-5">
@@ -14,6 +17,12 @@
       <div class="">
         <button id="goBack" class="bg-white rounded-sm cursor-pointer p-2">
           Go back
+        </button>
+        <button
+          onclick="logout()"
+          class="bg-white rounded-sm cursor-pointer p-2"
+        >
+          Log Out
         </button>
       </div>
     </nav>
@@ -86,56 +95,132 @@
         </div>
       </form>
       <div class="w-0.5 bg-gray-400"></div>
-      <div
-        class="added rounded-md shadow-xl w-100 p-5 h-fit hover:shadow-blue-300 transition ease-in-out duration-150"
-      ></div>
+      <div class="added w-100 p-5 h-fit"></div>
     </div>
     <script>
+      const title = document.querySelector("#title");
+      const price = document.querySelector("#price");
+      const description = document.querySelector("#textarea");
+      const category = document.querySelector("#category");
+      const rating = document.querySelector("#rating");
+
+      const logout = () => {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      };
+      const token = localStorage.getItem("token");
       const form = document.querySelector("form");
       const goBack = document.querySelector("#goBack");
       const addDiv = document.querySelector(".added");
-      const itemList = []
-      addDiv.innerHTML = `
-            <p class="color-grey-300">Add an item</p>
-        `;
-      // const title = document.querySelector('#title')
-      // const price = document.querySelector('#price')
-      // const description = document.querySelector('#textarea')
-      // const category = document.querySelector('#category')
-      // const rating = document.querySelector('#rating')
-      // const sumbit = document.querySelector('#btn')
-
+      let itemList = [];
       goBack.addEventListener("click", () => {
         window.location.href = "/";
       });
 
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        console.log("FormData : ", data);
-        itemList.push(data)
-        generateItem();
+      const loadItems = async () => {
+        try {
+          const response = await axios.get("/api/dashboard", {
+            headers: {
+              authorization: `${token}`,
+            },
+          });
+          const { data } = response.data;
+          console.log(data);
+          itemList = data  //populating the itemList (adding the data)
+          renderList(data);
+        } catch (error) {
+          console.log(error.message);
+          window.location.href = "/login";
+          localStorage.removeItem("token");
+        }
       };
 
-      const generateItem = () => {
-        addDiv.innerHTML = "";
+      loadItems();
+
+      const renderList = (itemList = []) => {
+        addDiv.innerHTML =
+          itemList.length === 0
+            ? `<div class="text-blue-500 text-center">Add an Item</div>`
+            : "";
         itemList.forEach((data) => {
           const div = document.createElement("div");
-          div.innerHTML = `
-                        <h1 class="text-3xl text-center">${data.title}</h1>
-        <br />
-        <p>Price : ${data.price}</p>
-        <br />
-        <p>description : ${data.description}</p>
-        <br />
-        <p>category : ${data.category}</p>
-        <br />
-        <p>rating : ${data.rating}</p>
-            
-            `;
+          div.classList.add(
+            "p-5",
+            "border",
+            "border-gray-300",
+            "rounded-md",
+            "mb-4",
+            "shadow-xl",
+            "hover:shadow-blue-300",
+            "transition",
+            "ease-in-out",
+            "duration-150"
+          );
+          div.innerHTML = generateItem(data);
           addDiv.appendChild(div);
         });
+      };
+
+      const generateItem = ({
+        title,
+        price,
+        description,
+        category,
+        rating,
+      }) => {
+        return `
+        <h1 class="text-3xl text-center">${title}</h1>
+        <br />
+        <p>Price : ${price}</p>
+        <br />
+        <p>description : ${description}</p>
+        <br />
+        <p>category : ${category}</p>
+        <br />
+        <p>rating : ${rating}</p>
+        <br />
+        <button class="bg-blue-300 w-20 rounded-md p-1">X</button>
+
+            `;
+      };
+
+      const addItem = async () => {
+        try {
+          const response = await axios.post(
+            "/api/dashboard",
+            {
+              title: title.value,
+              price: price.value,
+              description: description.value,
+              category: category.value,
+              rating: rating.value,
+            },
+            {
+              headers: {
+                authorization: token,
+              },
+            }
+          );
+          loadItems();
+        } catch (error) {
+          console.log(error.message);
+          window.location.href = "/login";
+          localStorage.removeItem("token");
+        }
+      };
+
+      const handleSubmit = async (e) => {
+        try {
+          e.preventDefault();
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData);
+          // console.log("FormData : ", data);
+          itemList.push(data);
+          addItem(data);
+          const res = await axios.post("/api/dashboard", data);
+        } catch (error) {
+          console.log(error.message);
+        }
       };
 
       form.addEventListener("submit", (e) => {
