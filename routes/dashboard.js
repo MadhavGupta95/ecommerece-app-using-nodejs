@@ -8,6 +8,9 @@ const router = express.Router();
 router.post("/dashboard", isAuthorized, async (req, res) => {
   try {
     const { user } = req;
+    if (!user || !user.id) {
+      return res.status(401).json({ message: "Unauthorized", success: false });
+    }
     const { title, price, description, category, rating } = req.body;
     if (!title || !price || !description || !category || !rating) {
       return res.status(400).json({

@@ -22,4 +22,6 @@ router.get("/dashboard", (req, res)=>{
   const filePath = path.join(path.resolve(), "pages", "dashboard.html")
   return res.sendFile(filePath)
 })
+
+
 export default router;
