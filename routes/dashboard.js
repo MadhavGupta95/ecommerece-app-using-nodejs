@@ -119,7 +119,6 @@ router.patch("/dashboard/:id", isAuthorized, async (req, res) => {
 router.delete("/dashboard/:id", isAuthorized, async (req, res) => {
   try {
     const { user } = req;
-    const { title, price, description, category, rating } = req.body;
     const { id: productId } = req.params;
 
     // check if product exists

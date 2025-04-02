@@ -126,7 +126,7 @@
           });
           const { data } = response.data;
           console.log(data);
-          itemList = data  //populating the itemList (adding the data)
+          itemList = data; //populating the itemList (adding the data)
           renderList(data);
         } catch (error) {
           console.log(error.message);
@@ -167,6 +167,7 @@
         description,
         category,
         rating,
+        id,
       }) => {
         return `
         <h1 class="text-3xl text-center">${title}</h1>
@@ -179,8 +180,10 @@
         <br />
         <p>rating : ${rating}</p>
         <br />
-        <button class="bg-blue-300 w-20 rounded-md p-1">X</button>
-
+        <div class="flex justify-around">
+            <button onClick="handleDelete('${id}')" class="bg-blue-300 w-20 rounded-md p-1">X</button>
+        <button class="bg-blue-300 w-20 rounded-md p-1">Edit</button>
+          </div>
             `;
       };
 
@@ -217,9 +220,23 @@
           // console.log("FormData : ", data);
           itemList.push(data);
           addItem(data);
-          const res = await axios.post("/api/dashboard", data);
         } catch (error) {
           console.log(error.message);
+        }
+      };
+
+      const handleDelete = async (id) => {
+        try {
+          const res = await axios.delete(`/api/dashboard/${id}`, {
+            headers: {
+              authorization: token,
+            },
+          });
+          loadItems();
+        } catch (error) {
+          console.log(error);
+          window.location.href = "/login";
+          localStorage.removeItem("token");
         }
       };
 

@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <link rel="icon" href="logo.png" type="image/x-icon">
+    <link rel="icon" href="logo.png" type="image/x-icon" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"></script>
     <title>JustBuy</title>
   </head>
   <body class="p-5">
@@ -39,21 +40,20 @@
     ></div>
 
     <script>
-      const token = localStorage.getItem("token")
-      if(!token){
-        window.location.href = '/login'
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "/login";
       }
       const goback = document.querySelector("#go-back");
       goback.addEventListener("click", () => {
         window.location.href = "/";
       });
 
-      const dash = document.querySelector('#dash')
-      dash.addEventListener('click', ()=>{
-        window.location.href = "/dashboard"
-      })
+      const dash = document.querySelector("#dash");
+      dash.addEventListener("click", () => {
+        window.location.href = "/dashboard";
+      });
       const result = document.querySelector("#result");
-      const url = "https://fakestoreapi.com/products";
       const input = document.querySelector("input");
       const button = document.querySelector("#btn");
       const container = document.querySelector("#productContainer");
@@ -70,38 +70,39 @@ Search. Shop. Enjoy. Start exploring now and discover amazing deals tailored jus
 
       const getData = async () => {
         try {
-          // const query = input.value.trim().toLowerCase();
-          button.disabled = true
-          button.innerHTML = "Searching..."
+          button.disabled = true;
+          button.innerHTML = "Searching...";
           const query = input.value.trim().toLowerCase();
-          const res = await fetch(url);
-          const data = await res.json();
-          if (query.length === 0) {
+          const res = await axios.get(
+            `/db/products?search=${query}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `${token}`,
+              },
+            }
+          );
+          const { data } = res.data;
+          if (!query) {
             return (container.innerHTML = `
               <p class="text-red-500 text-center">Please enter something!</p>
             `);
+            return;
           }
-          const filterData = data.filter(
-            (product) =>
-              product.title.toLowerCase().includes(query) ||
-              product.category.toLowerCase().includes(query)
-          );
 
-          console.log(filterData);
-          console.log(query);
-
-          if (filterData.length === 0) {
+          if (data.length === 0) {
             container.innerHTML = `
-              <h1 class="text-red-500 text-center">No product found!</h1>
+              <h1 class="text-red-500 text-center">${data.message}!</h1>
             `;
+            return;
           } else {
-            generateCard(filterData);
+            generateCard(data);
           }
         } catch (error) {
           console.log(error.message);
-        } finally{
-          button.disabled = false
-          button.innerHTML = "Search"
+        } finally {
+          button.disabled = false;
+          button.innerHTML = "Search";
         }
       };
 

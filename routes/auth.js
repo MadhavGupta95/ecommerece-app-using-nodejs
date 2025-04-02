@@ -121,8 +121,9 @@ router.post("/login", async (req, res) => {
 // fetches users data
 router.get("/todos", isAuthorized, async (req, res) => {
   try {
-    console.log(req.user);
+    const {user} = req
     return res.json({
+      data : user,
       message: "Everything works fine",
     });
   } catch (error) {
